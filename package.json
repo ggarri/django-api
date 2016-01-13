@@ -1,0 +1,9 @@
+{
+  "name": "base7test",
+  "version": "1.0.0",
+  "dependencies": {
+    "datatable": "^2.0.2",
+    "datatables": "^1.10.9",
+    "jquery": "^2.1.4"
+  }
+}

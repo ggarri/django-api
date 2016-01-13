@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Base7test</title>
+
+    {% load staticfiles %}
+    <script src="{% static 'node_modules/jquery/dist/jquery.min.js' %}"></script>
+    <script src="{% static 'node_modules/datatables/media/js/jquery.dataTables.min.js' %}"></script>
+
+    {% load staticfiles %}
+    <link rel="stylesheet" type="text/css" href="{% static 'node_modules/datatables/media/css/jquery.dataTables.min.css' %}" />
+</head>
+
+<body>
+<div class="display">
+    <table id="datatable" class="display" cellspacing="0" width="100%">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Number</th>
+                <th>Comment</th>
+                <th>Client</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var oTable = $('#datatable').dataTable({
+            "processing": true,
+            "serverSide": true,
+            "ajax": "{% url 'order_list_json' %}",
+            "lengthMenu": [[10, 100, 1000, 2000, -1], [10, 100, 1000, 2000, "All"]]
+        });
+    });
+</script>
+</body>
+</html>
