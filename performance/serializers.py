@@ -24,7 +24,8 @@ class DynamicFieldsModelSerializer(serializers.ModelSerializer):
 class ReservationSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer):
     class Meta:
         model = Reservation
-        fields = ('id', 'number', 'comment', 'client')
+        # fields = ('id', 'number', 'comment', 'client')
+        fields = '__all__'
 
 
 class ClientSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer):
@@ -32,12 +33,21 @@ class ClientSerializer(DynamicFieldsModelSerializer, serializers.ModelSerializer
 
     class Meta:
         model = Client
-        fields = ('id', 'first_name', 'last_name', 'reservations')
+        # fields = ('id', 'first_name', 'last_name', 'reservations')
+        fields = '__all__'
+
+
+class ReservationHyperSerializer(DynamicFieldsModelSerializer, serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Reservation
+        # fields = ('id', 'number', 'comment', 'client')
+        fields = '__all__'
 
 
 class ClientHyperSerializer(DynamicFieldsModelSerializer, serializers.HyperlinkedModelSerializer):
-    reservations = ReservationSerializer(many=True, read_only=True)
+    reservations = ReservationHyperSerializer(many=True, read_only=True)
 
     class Meta:
         model = Client
-        fields = ('id', 'first_name', 'last_name', 'reservations')
+        # fields = ('id', 'first_name', 'last_name', 'reservations')
+        fields = '__all__'

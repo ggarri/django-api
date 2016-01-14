@@ -40,7 +40,7 @@ class JSONResponse(HttpResponse):
 @csrf_exempt
 def client_list(request):
     clients = Client.objects.all()
-    serializer = ClientHyperSerializer(clients, many=True)
+    serializer = ClientSerializer(clients, many=True)
     return JSONResponse(serializer.data)
 
 
@@ -60,9 +60,13 @@ def api_root(request, format=None):
 
 
 class ClientApi(generics.ListAPIView):
-    queryset = Client.objects.all()
-    serializer_class = ClientHyperSerializer
+    queryset = Client.objects
+    serializer_class = ClientSerializer
     filter_backends = (filters.DjangoFilterBackend, filters.OrderingFilter, filters.SearchFilter)
     filter_class = ClientFilter
     search_fields = ('first_name', 'last_name', 'reservation__comment')
     ordering_fields = '__all__'
+
+    def get_queryset(self):
+        queryset = super(ClientApi, self).get_queryset()
+        return queryset.prefetch_related('reservations')
