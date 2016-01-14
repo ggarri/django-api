@@ -7,6 +7,7 @@ from performance.datatables import OrderListJson
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', views.index, name='home'),
+    url(r'^empty$', views.empty, name='empty'),
     url(r'^test$', views.test, name='test'),
     url(r'^table$', OrderListJson.as_view(), name='order_list_json'),
 

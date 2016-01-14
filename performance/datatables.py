@@ -26,15 +26,3 @@ class OrderListJson(BaseDatatableView):
         if search:
             qs = qs.filter(id__istartswith=search)
         return qs
-
-        # # more advanced example using extra parameters
-        # filter_client = self.request.GET.get(u'client', None)
-        #
-        # if filter_client:
-        #     client_parts = filter_client.split(' ')
-        #     qs_params = None
-        #     for part in client_parts:
-        #         q = Q(client_first_name__istartswith=part)|Q(client_last_name__istartswith=part)
-        #         qs_params = qs_params | q if qs_params else q
-        #     qs = qs.filter(qs_params)
-        return qs

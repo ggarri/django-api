@@ -1,18 +1,19 @@
-from django.contrib.admin import filters
 from django.http import HttpResponse
-from django.http.response import JsonResponse
 from django.template import loader
 from django.views.decorators.csrf import csrf_exempt
+from django.core import serializers as core_serializer
+import json
+from django.core.serializers.json import DjangoJSONEncoder
+
 
 from rest_framework.decorators import api_view
 from rest_framework.renderers import JSONRenderer
-from rest_framework.parsers import JSONParser
 from rest_framework.reverse import reverse
 from rest_framework.response import Response
-from rest_framework import generics, renderers, filters
+from rest_framework import generics, filters
 from performance.Filters import ClientFilter
 
-from performance.serializers import serializers, ClientSerializer, ReservationSerializer, ClientHyperSerializer
+from performance.serializers import serializers, ClientSerializer, ReservationSerializer
 from performance.models import Client, Reservation
 
 
@@ -21,21 +22,13 @@ def index(request):
     return HttpResponse(template.render())
 
 
+def empty(request):
+    return JSONResponse({})
+
+
 def test(request):
-    return serializers.serialize('json', Reservation.objects.all().select_related('client'),
+    return core_serializer.serialize('json', Reservation.objects.all().select_related('client'),
                                  use_natural_foreign_keys=True, use_natural_primary_keys=True)
-    return JsonResponse(get_all_reservation(), safe=False)
-
-
-class JSONResponse(HttpResponse):
-    """
-    An HttpResponse that renders its content into JSON.
-    """
-    def __init__(self, data, **kwargs):
-        content = JSONRenderer().render(data)
-        kwargs['content_type'] = 'application/json'
-        super(JSONResponse, self).__init__(content, **kwargs)
-
 
 @csrf_exempt
 def client_list(request):
@@ -59,6 +52,16 @@ def api_root(request, format=None):
     })
 
 
+class JSONResponse(HttpResponse):
+    """
+    An HttpResponse that renders its content into JSON.
+    """
+    def __init__(self, data, **kwargs):
+        content = JSONRenderer().render(data)
+        kwargs['content_type'] = 'application/json'
+        super(JSONResponse, self).__init__(content, **kwargs)
+
+
 class ClientApi(generics.ListAPIView):
     queryset = Client.objects
     serializer_class = ClientSerializer
@@ -70,3 +73,10 @@ class ClientApi(generics.ListAPIView):
     def get_queryset(self):
         queryset = super(ClientApi, self).get_queryset()
         return queryset.prefetch_related('reservations')
+        # fields = self.request.GET.get('fields')
+        # fields = [s.encode('ascii') for s in fields.strip('{}').split(',')]
+        # return queryset.values_list(*fields).prefetch_related('reservations')
+
+    # def list(self, request, *args, **kwargs):
+    #     queryset = self.filter_queryset(self.get_queryset())
+    #     return Response(queryset)
